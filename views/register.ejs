@@ -1,0 +1,26 @@
+<%- include('header'); %>
+<%- include('nav'); %>
+
+<main>
+    <h3>
+        Sign Up
+    </h3>
+    <% if (typeof (errors) !== "undefined") { %>
+        <% for(var i = 0; i < errors.length; i++) { %>
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <%= errors[i].msg %>
+            </div>
+        <% } %>
+    <% } %>
+    <form action="/register" method="POST">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" value=<%= data.username %>>
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" value=<%= data.password %>>
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" value=<%= data.email %>>
+        <label for="phone">Phone</label>
+        <input type="text" name="phone" id="phone" value=<%= data.phone %>>
+        <button class="btn btn-success">Submit</button>
+    </form>
+</main>
