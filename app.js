@@ -1,15 +1,15 @@
-const express = require('express'),
-    app = express(),
-    mongoose = require("mongoose"),
-    passport = require("passport"),
-    bodyParser = require("body-parser"),
-    LocalStrategy = require("passport-local"),
+const express             = require('express'),
+    app                   = express(),
+    mongoose              = require("mongoose"),
+    passport              = require("passport"),
+    bodyParser            = require("body-parser"),
+    LocalStrategy         = require("passport-local"),
     passportLocalMongoose = require("passport-local-mongoose"),
-    User = require("./models/user")
-mongoSanitize = require("express-mongo-sanitize")
-rateLimit = require("express-rate-limit")
-xss = require("xss-clean")
-helmet = require("helmet")
+    User                  = require("./models/user")
+    mongoSanitize         = require("express-mongo-sanitize")
+    rateLimit             = require("express-rate-limit")
+    xss                   = require("xss-clean")
+    helmet                = require("helmet")
 
 const {check, validationResult} = require('express-validator')
 
@@ -52,7 +52,6 @@ const limit = rateLimit({
     message: 'Too many request'
 })
 
-app.use('/routeName', limit)
 app.use(express.json({limit: '10kb'})) // body limit is 10kb
 app.use(xss())
 app.use(helmet())
@@ -60,22 +59,22 @@ app.use(helmet())
 //=======================
 //      R O U T E S
 //=======================
-app.get("/", (req, res) => {
+app.get("/", limit, (req, res) => {
     res.render("home");
 })
-app.get("/userprofile", (req, res) => {
+app.get("/userprofile", limit, (req, res) => {
     res.render("userprofile");
 })
 //Auth Routes
-app.get("/login", (req, res) => {
+app.get("/login", limit, (req, res) => {
     res.render("login");
 });
 app.post("/login", passport.authenticate("local", {
     successRedirect: "/userprofile",
     failureRedirect: "/login"
-}), function (req, res) {
+}), limit, function (req, res) {
 });
-app.get("/register", (req, res) => {
+app.get("/register", limit, (req, res) => {
     res.render("register");
 });
 
@@ -96,7 +95,7 @@ app.post("/register", [
         .withMessage('Password must contain a number')
         .matches(/[!@#$%^&*(),.?":{}|<>]/)
         .withMessage('Password must contain a special character')
-], (req, res) => {
+], limit, (req, res) => {
     const errors = validationResult(req);
     if (errors.isEmpty()) {
         User.register(new User({
